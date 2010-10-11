@@ -1,0 +1,89 @@
+== Description
+
+an http interface that doesn't suck.
+
+if you're like me, your finger seize at the thought of using
+net/http. it's practically inconceivable that we have this beast
+while python has urllib/urllib2- and even c++ and java have
+equally better interfaces for doing client-side http work.
+
+the days of teeth-gnashing are over.
+
+httprb is what ruby (and rubyists) always wanted out of net/http:
+a ruby interface for communicating with the HTTP world. example:
+
+  get 'www.google.com'
+  # => #<Net::HTTPOK 200 OK readbody=true>
+
+woah. wait. what about all this Net::HTTP.start(...) {http.get(...)}
+nonsense? throw it out the window- this is Ruby, after all.
+
+ok, so the simple case looks good. what about headers, parameters,
+and all the rest of the HTTP world?
+
+have no fear, check this out:
+
+  post 'www.example.com/login' do |req|
+    req.parameters << "username", "tom"
+    req.parameters << "password", "password"
+  end
+  # => #<Net::HTTPOK 200 OK readbody=true>
+
+getting better, eh? so relax, wipe the incredulity off your face- i
+know you've been waiting years for net/http to get better. the wait
+is over.
+
+== Installation
+
+while under active and early development, by which i mean until i
+deem it worthy, grab the source and either install it manually or
+run:
+
+  rake gem
+  gem install pkg/httprb*.gem
+
+== Usage
+
+this is sinatra-inspired (clearly). choose your verb, add a url,
+and watch the sparks fly.
+
+simple get request:
+
+  get 'www.google.com'
+  # => #<Net::HTTPOK 200 OK readbody=true>
+
+you want the response object? you mean you actually want the body?
+no worries, you're covered:
+
+  res = get 'www.google.com'
+  # => #<Net::HTTPOK 200 OK readbody=true>
+  res.body
+  ...
+
+let's do a little header work:
+
+  res = get 'www.example.com' do |req|
+    req.headers << "x-some-key", "some value"
+    req.headers << "x-some-other-key", "some other value"
+  end
+  # => #<Net::HTTPOK 200 OK readbody=true>
+
+moving on to a post with parameters...
+
+  res = post 'www.example.com' do |req|
+    req.parameters << "some_key", "some value"
+    req.parameters << "some_other_key", "some other value"
+  end
+  # => #<Net::HTTPOK 200 OK readbody=true>
+
+== Author
+
+tom metge <mailto:tom@accident-prone.com>
+
+he's an awesome guy.
+
+== Home / Download
+
+the source (and anything else):
+
+ * http://github.com/tommetge/httprb
