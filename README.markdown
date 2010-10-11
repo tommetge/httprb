@@ -1,4 +1,5 @@
-== Description
+Description
+-----------
 
 an http interface that doesn't suck.
 
@@ -33,7 +34,8 @@ getting better, eh? so relax, wipe the incredulity off your face- i
 know you've been waiting years for net/http to get better. the wait
 is over.
 
-== Installation
+Installation
+------------
 
 while under active and early development, by which i mean until i
 deem it worthy, grab the source and either install it manually or
@@ -42,7 +44,8 @@ run:
   rake gem
   gem install pkg/httprb*.gem
 
-== Usage
+Usage
+-----
 
 this is sinatra-inspired (clearly). choose your verb, add a url,
 and watch the sparks fly.
@@ -76,13 +79,15 @@ moving on to a post with parameters...
   end
   # => #<Net::HTTPOK 200 OK readbody=true>
 
-== Author
+Author
+------
 
 tom metge <mailto:tom@accident-prone.com>
 
 he's an awesome guy.
 
-== Home / Download
+Home / Download
+---------------
 
 the source (and anything else):
 
