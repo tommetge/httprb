@@ -87,3 +87,7 @@ he's an awesome guy.
 the source (and anything else):
 
  * http://github.com/tommetge/httprb
+
+== Documentation
+
+ * http://rdoc.info/github/tommetge/httprb/master/frames
