@@ -27,4 +27,16 @@ class TestRequest < Test::Unit::TestCase
     assert req.ssl?
     assert req.ssl
   end
+  
+  def test_paramaters
+    assert_not_nil req = HTTPrb::Request.new('http://localhost', {:type => 'GET'})
+    assert(req.parameter "key", "value")
+    assert(req.http_request.path == '/?key=value')
+  end
+  
+  def test_headers
+    assert_not_nil req = HTTPrb::Request.new('http://localhost', {:type => 'GET'})
+    assert(req.header "key", "value")
+    assert(req.http_request["key"] == "value")
+  end
 end

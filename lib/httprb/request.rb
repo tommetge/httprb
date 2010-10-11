@@ -6,6 +6,7 @@
 # handled here.
 
 require 'uri'
+require 'cgi'
 
 module HTTPrb
   
@@ -46,9 +47,10 @@ class Request
     @ssl = true if @uri.scheme == "https"
     
     @options = options
-    @options[:headers] = {} unless @options[:headers]
-    @options[:params] = {} unless @options[:params]
     @options[:type] = 'GET' unless @options[:type]
+    
+    @parameters = {}
+    @headers = {}
   end
   
   # sets up HTTP basic auth- identical to
@@ -58,26 +60,69 @@ class Request
     @options[:user] = user
     @options[:pass] = pass
   end
+
+  # set a query parameter key/value pair
+  def parameter(key, value = nil)
+    @parameters[key] = value
+  end
+
+  # allows inspection and outside manipulation of
+  # query parameters.
+  # * returns all parameters
+  def parameters
+    @parameters
+  end
+  
+  def header(key, value)
+    if @headers[key]
+      if @headers[key].is_a? Array
+        @headers[key] << value
+      else
+        cur = @headers[key]
+        @headers[key] = [cur, value]
+      end
+    else
+      @headers[key] = value
+    end
+  end
+  
+  def headers
+    @headers
+  end
   
   # generates a Net::HTTP request object. for use
   # when the request is passed to Net::HTTP.
   def http_request
+    if !@parameters.empty?
+      path = "#{@uri.path}?".concat(@parameters.collect {|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&'))
+    else
+      path = @uri.path
+    end
+    
     http_req = case @options[:type].upcase
     when 'GET'
-      Net::HTTP::Get.new(@uri.path)
+      Net::HTTP::Get.new(path)
     when 'POST'
-      Net::HTTP::Post.new(@uri.path)
+      Net::HTTP::Post.new(path)
     when 'PUT'
-      Net::HTTP::Put.new(@uri.path)
+      Net::HTTP::Put.new(path)
     when 'HEAD'
-      Net::HTTP::Head.new(@uri.path)
+      Net::HTTP::Head.new(path)
     when 'DELETE'
-      Net::HTTP::Delete.new(@uri.path)
+      Net::HTTP::Delete.new(path)
     else
-      Net::HTTP::Get.new(@uri.path)
+      Net::HTTP::Get.new(path)
     end
     if @options[:basic_auth] && @options[:user] && @options[:pass]
       http_req.basic_auth(@options[:user], @options[:pass])
+    end
+    
+    @headers.each do |key, value|
+      if value.is_a? Array
+        value.each {|v| http_req.add_field(key, v)}
+      else
+        http_req.add_field(key, value)
+      end
     end
     
     return http_req

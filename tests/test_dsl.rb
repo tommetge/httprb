@@ -58,4 +58,21 @@ class TestDSL < Test::Unit::TestCase
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
   end
+  
+  def test_params
+    res = get 'http://localhost' do |req|
+      assert req.parameter "key", "value"
+      assert req.parameter "key2", "value"
+      assert req.parameters.include?("key")
+      assert req.parameters.include?("key2")
+    end
+  end
+  
+  def test_headers
+    res = get 'http://localhost' do |req|
+      assert req.header "x-key", "value"
+      assert req.headers["x-key"] == "value"
+      assert req.http_request["x-key"] == "value"
+    end
+  end
 end
