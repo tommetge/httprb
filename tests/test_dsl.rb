@@ -59,12 +59,58 @@ class TestDSL < Test::Unit::TestCase
     assert res.code =~ /2[0-9].|3[0-9]./
   end
   
+  def test_put
+    assert_not_nil res = put('http://mozy.com')
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+  
+  def test_put_block
+    res = put 'http://google.com' do |req|
+      assert_not_nil req
+      assert req.options[:type] == 'PUT'
+      assert req.uri.host = 'mozy.com'
+    end
+    assert_not_nil res
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+
+  def test_post
+    assert_not_nil res = post('http://mozy.com')
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+
+  def test_post_block
+    res = post 'http://google.com' do |req|
+      assert_not_nil req
+      assert req.options[:type] == 'POST'
+      assert req.uri.host = 'mozy.com'
+    end
+    assert_not_nil res
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+
+  def test_delete
+    assert_not_nil res = delete('http://mozy.com')
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+
+  def test_delete_block
+    res = delete 'http://google.com' do |req|
+      assert_not_nil req
+      assert req.options[:type] == 'DELETE'
+      assert req.uri.host = 'mozy.com'
+    end
+    assert_not_nil res
+    assert res.code =~ /2[0-9].|3[0-9]./
+  end
+  
   def test_params
     res = get 'http://mozy.com' do |req|
       assert req.parameter "key", "value"
       assert req.parameter "key2", "value"
       assert req.parameters.include?("key")
       assert req.parameters.include?("key2")
+      assert req.http_request.path.include?("key=value")
     end
   end
   
