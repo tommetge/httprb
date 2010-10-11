@@ -10,6 +10,11 @@ class TestDSL < Test::Unit::TestCase
   def teardown
   end
   
+  def test_get_urls
+    assert_not_nil res = get('http://google.com')
+    assert_not_nil res = get('google.com')
+  end
+  
   def test_get
     assert_not_nil res = get('http://google.com')
     assert res.code =~ /2[0-9].|3[0-9]./

@@ -11,6 +11,9 @@ class Request
       @uri = uri
     elsif uri.is_a? String
       @uri = URI.parse(uri)
+      if !@uri.scheme
+        @uri = URI.parse("http://" + uri)
+      end
     else
       raise Exception, "Invalid URL"
     end
