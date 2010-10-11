@@ -1,3 +1,10 @@
+# a bit of insanity. a singleton representation
+# of a Net::HTTP object. provides connection
+# caching when the host is the same. no real
+# benefit when changing servers (the underlying
+# connection changes when changing servers, no
+# way around that).
+
 require 'singleton'
 require 'net/http'
 require 'net/https'
@@ -8,6 +15,8 @@ class HTTPCache
   include Singleton
   attr_reader :http
   
+  # accepts an HTTPrb::Request object, performs
+  # the request, and returns the Net::HTTP result
   def make_request(req)
     if @http && @http.address == req.uri.host && !@http.started?
       @http.start
