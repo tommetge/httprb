@@ -23,6 +23,7 @@ class HTTPCache
     else
       @http = Net::HTTP.new(req.uri.host, req.uri.port)
       @http.use_ssl = req.ssl?
+      @http.set_debug_output($stderr) if req.debug
       @http.start
     end
     @http.request(req.http_request)

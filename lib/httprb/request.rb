@@ -11,7 +11,7 @@ require 'cgi'
 module HTTPrb
   
 class Request
-  attr_accessor :uri, :headers, :params, :ssl
+  attr_accessor :uri, :headers, :params, :ssl, :debug
   attr_reader :options
   
   # create an HTTPrb::Request object
@@ -48,6 +48,7 @@ class Request
     
     @options = options
     @options[:type] = 'GET' unless @options[:type]
+    @debug = options[:debug] ? true : false
     
     @parameters = {}
     @headers = {}
