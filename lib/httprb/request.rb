@@ -11,7 +11,7 @@ require 'cgi'
 module HTTPrb
   
 class Request
-  attr_accessor :uri, :headers, :params, :ssl, :debug
+  attr_accessor :uri, :headers, :parameters, :ssl, :debug
   attr_reader :options
   
   # create an HTTPrb::Request object
@@ -51,6 +51,15 @@ class Request
     @debug = options[:debug] ? true : false
     
     @parameters = {}
+    if @uri.query
+      CGI.parse(@uri.query).each do |k,v|
+        if v.length == 1
+          @parameters[k] = v.first
+        else
+          @parameters[k] = v
+        end
+      end
+    end
     @headers = {}
   end
   
@@ -62,18 +71,14 @@ class Request
     @options[:pass] = pass
   end
 
-  # set a query parameter key/value pair
+  # set or add to a query parameter key/value pair
+  # if you wish to set multiple values for a key,
+  # provide an array of values as the second argument.
   def parameter(key, value = nil)
     @parameters[key] = value
   end
-
-  # allows inspection and outside manipulation of
-  # query parameters.
-  # * returns all parameters
-  def parameters
-    @parameters
-  end
   
+  # set a header key/value pair
   def header(key, value)
     if @headers[key]
       if @headers[key].is_a? Array
@@ -87,19 +92,30 @@ class Request
     end
   end
   
-  def headers
-    @headers
+  # generates the query string based on the provided
+  # parameter dictionary
+  def query_string
+    if !@parameters.empty?
+      # this is crabby because query strings can have more than
+      # one value per key- the key, in that case, is simply
+      # repeated with the additional value.
+      queries = []
+      @parameters.each do |k,v|
+        if v.is_a?(Array)
+          v.each {|val| queries << "#{k}=#{CGI.escape(val.to_s)}"}
+        else
+          queries << "#{k}=#{CGI.escape(v.to_s)}"
+        end
+      end
+      return queries.join('&')
+    end
+    return ""
   end
   
   # generates a Net::HTTP request object. for use
   # when the request is passed to Net::HTTP.
   def http_request
-    if !@parameters.empty?
-      path = "#{@uri.path}?".concat(@parameters.collect {|k,v| "#{k}=#{CGI.escape(v.to_s)}"}.join('&'))
-    else
-      path = @uri.path
-    end
-    
+    path = "#{@uri.path}?#{query_string}"
     http_req = case @options[:type].upcase
     when 'GET'
       Net::HTTP::Get.new(path)

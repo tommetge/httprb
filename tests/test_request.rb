@@ -30,8 +30,19 @@ class TestRequest < Test::Unit::TestCase
   
   def test_paramaters
     assert_not_nil req = HTTPrb::Request.new('http://localhost', {:type => 'GET'})
-    assert(req.parameter "key", "value")
-    assert(req.http_request.path == '/?key=value')
+    assert req.parameter "key", "value"
+    assert req.http_request.path == '/?key=value'
+    assert req.parameter "key", ["value", "value2"]
+    assert req.http_request.path == '/?key=value&key=value2' || req.http_request.path == '/?key=value2&key=value'
+  end
+  
+  def test_query_string_params
+    assert_not_nil req = HTTPrb::Request.new('http://localhost?key=value&key2=value2', {:type => 'GET'})
+    assert req.parameters["key"] == "value"
+    assert req.parameters["key2"] == "value2"
+    assert_not_nil req = HTTPrb::Request.new('http://localhost?key=value&key=value2', {:type => 'GET'})
+    assert req.parameters["key"].is_a?(Array)
+    assert req.parameters["key"].include?('value') && req.parameters["key"].include?('value2')
   end
   
   def test_headers
