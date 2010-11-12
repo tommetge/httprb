@@ -76,6 +76,37 @@ moving on to a post with parameters...
   end
   # => #<Net::HTTPOK 200 OK readbody=true>
 
+== Namespacing and Collisions
+
+wait, you use Sinatra too? no worries, i won't leave you high and
+dry. when a namespace collision is detected (i.e. you've required
+'sinatra'), HTTPrb automatically redefines its methods to carry
+the prefix, "client_". example:
+
+  require 'sinatra'
+  require 'httprb'
+  res = client_head 'www.google.com'
+
+if you don't like the "client_" prefix, feel free to change it.
+the definition is pulled from the environment variable named,
+'HTTPRB_COLLISION_PREFIX'. yet another example:
+
+  ...
+  ENV['HTTPRB_COLLISION_PREFIX'] = 'the_right_'
+  res = the_right_get 'www.google.com'
+
+how do you know when collisions occur, you ask? HTTPrb kindly
+notifies you:
+
+  require 'sinatra'
+  require 'httprb'
+  get 'www.google.com'
+  # => WARNING: Namespace collision detected
+  # => HTTPrb::get has been renamed to client_get
+  # => To disable this message, set HTTPRB_IGNORE_COLLISIONS to false
+  # => ArgumentError: tried to create Proc object without a block
+  ...
+
 == Author
 
 tom metge <mailto:tom@accident-prone.com>
