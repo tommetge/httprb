@@ -1,4 +1,5 @@
 require 'httprb/dsl'
+require 'httprb/delegate'
 
 module HTTPrb
   require 'httprb/version'
@@ -9,3 +10,5 @@ module HTTPrb
     $stderr << "HTTPS not found- disabled"
   end
 end
+
+include HTTPrb::Delegator
