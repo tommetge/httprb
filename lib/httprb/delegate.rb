@@ -19,13 +19,14 @@ module HTTPrb
 module Delegator
   def self.delegate_collision(method)
     ENV['HTTPRB_COLLISION_PREFIX'] ||= 'client_'
+    ENV['HTTPRB_IGNORE_COLLISIONS'] ||= 'true'
     eval <<-RUBY, binding, '(__DELEGATE__)', 1
       alias_method #{method.inspect}_original, #{method.inspect}
       
       def #{method}(*args, &b)
-        if ENV['HTTPRB_IGNORE_COLLISIONS']
+        if ENV['HTTPRB_IGNORE_COLLISIONS'] == 'true'
           puts "WARNING: Namespace collision detected"
-          puts "#{method} has been renamed to #{ENV['HTTPRB_COLLISION_PREFIX']}#{method}"
+          puts "HTTPrb::#{method} has been renamed to #{ENV['HTTPRB_COLLISION_PREFIX']}#{method}"
           puts "To disable this message, set HTTPRB_IGNORE_COLLISIONS to false"
         end
         #{method}_original(*args, &b)
