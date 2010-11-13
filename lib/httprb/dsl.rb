@@ -6,18 +6,19 @@
 # note that each of the following methods accepts a
 # block- this is the beauty of the whole thing.
 
-# if you're wondering about the code duplication, read:
-#
-# http://blog.sidu.in/2007/11/ruby-blocks-gotchas.html
-#
-# implicit invocation of blocks is just faster. so we
-# duplicate code. :(
-
 require 'httprb/request'
 require 'httprb/http_cache'
 
 module HTTPrb
   public
+  def HTTPrb.req(type, url, options = {}, &block)
+    options[:type] = type.upcase
+    req = Request.new(url, options)
+    #yield(req) if block_given?
+    req.evaluate(&block) if block_given?
+    HTTPrb::HTTPCache.instance.make_request(req)
+  end
+
   # get request
   # 
   # * options are not generally used; HTTPrb::Request
@@ -25,11 +26,8 @@ module HTTPrb
   #   handling.
   # * accepts a block, handing off the HTTPrb::Request
   #   object to it, if provided.
-  def HTTPrb.get(url, options = {})
-    options[:type] = 'GET'
-    req = Request.new(url, options)
-    yield(req) if block_given?
-    HTTPrb::HTTPCache.instance.make_request(req)
+  def HTTPrb.get(url, options = {}, &block)
+    HTTPrb.req('GET', url, options, &block)
   end
 
   # head request
@@ -39,11 +37,8 @@ module HTTPrb
   #   handling.
   # * accepts a block, handing off the HTTPrb::Request
   #   object to it, if provided.
-  def HTTPrb.head(url, options = {})
-    options[:type] = 'HEAD'
-    req = Request.new(url, options)
-    yield(req) if block_given?
-    HTTPrb::HTTPCache.instance.make_request(req)
+  def HTTPrb.head(url, options = {}, &block)
+    HTTPrb.req('HEAD', url, options, &block)
   end
   
   # post request
@@ -53,11 +48,8 @@ module HTTPrb
   #   handling.
   # * accepts a block, handing off the HTTPrb::Request
   #   object to it, if provided.
-  def HTTPrb.post(url, options = {})
-    options[:type] = 'POST'
-    req = Request.new(url, options)
-    yield(req) if block_given?
-    HTTPrb::HTTPCache.instance.make_request(req)
+  def HTTPrb.post(url, options = {}, &block)
+    HTTPrb.req('POST', url, options, &block)
   end
   
   # put request
@@ -67,11 +59,8 @@ module HTTPrb
   #   handling.
   # * accepts a block, handing off the HTTPrb::Request
   #   object to it, if provided.
-  def HTTPrb.put(url, options = {})
-    options[:type] = 'PUT'
-    req = Request.new(url, options)
-    yield(req) if block_given?
-    HTTPrb::HTTPCache.instance.make_request(req)
+  def HTTPrb.put(url, options = {}, &block)
+    HTTPrb.req('PUT', url, options, &block)
   end
   
   # delete request
@@ -81,11 +70,8 @@ module HTTPrb
   #   handling.
   # * accepts a block, handing off the HTTPrb::Request
   #   object to it, if provided.
-  def HTTPrb.delete(url, options = {})
-    options[:type] = 'DELETE'
-    req = Request.new(url, options)
-    yield(req) if block_given?
-    HTTPrb::HTTPCache.instance.make_request(req)
+  def HTTPrb.delete(url, options = {}, &block)
+    HTTPrb.req('DELETE', url, options, &block)
   end
 
 end

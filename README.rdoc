@@ -23,9 +23,9 @@ and all the rest of the HTTP world?
 
 have no fear, check this out:
 
-  post 'www.example.com/login' do |req|
-    req.parameter "username", "tom"
-    req.parameter "password", "password"
+  post 'www.example.com/login' do
+    parameter "username", "tom"
+    parameter "password", "password"
   end
   # => #<Net::HTTPOK 200 OK readbody=true>
 
@@ -59,17 +59,17 @@ no worries, you're covered:
 
 let's do a little header work:
 
-  res = get 'www.example.com' do |req|
-    req.header "x-some-key", "some value"
-    req.header "x-some-other-key", "some other value"
+  res = get 'www.example.com'
+    header "x-some-key", "some value"
+    header "x-some-other-key", "some other value"
   end
   # => #<Net::HTTPOK 200 OK readbody=true>
 
 moving on to a post with parameters...
 
-  res = post 'www.example.com' do |req|
-    req.parameter "some_key", "some value"
-    req.parameter "some_other_key", "some other value"
+  res = post 'www.example.com'
+    parameter "some_key", "some value"
+    parameter "some_other_key", "some other value"
   end
   # => #<Net::HTTPOK 200 OK readbody=true>
 

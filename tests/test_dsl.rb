@@ -21,10 +21,9 @@ class TestDSL < Test::Unit::TestCase
   end
   
   def test_get_block
-    res = get 'http://google.com' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'GET'
-      assert req.uri.host = 'mozy.com'
+    res = get 'http://google.com' do
+      assert type == 'GET'
+      assert uri.host = 'mozy.com'
     end
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
@@ -36,10 +35,9 @@ class TestDSL < Test::Unit::TestCase
   end
   
   def test_get_ssl_block
-    res = get 'https://mozy.com/' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'GET'
-      assert req.uri.host = 'mozy.com'
+    res = get 'https://mozy.com/' do
+      assert type == 'GET'
+      assert uri.host = 'mozy.com'
     end
     assert res.code =~ /2[0-9].|3[0-9]./
   end
@@ -50,10 +48,9 @@ class TestDSL < Test::Unit::TestCase
   end
   
   def test_head_block
-    res = head 'http://google.com' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'HEAD'
-      assert req.uri.host = 'mozy.com'
+    res = head 'http://google.com' do
+      assert type == 'HEAD'
+      assert uri.host = 'mozy.com'
     end
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
@@ -65,10 +62,9 @@ class TestDSL < Test::Unit::TestCase
   end
   
   def test_put_block
-    res = put 'http://google.com' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'PUT'
-      assert req.uri.host = 'mozy.com'
+    res = put 'http://google.com' do
+      assert type == 'PUT'
+      assert uri.host = 'mozy.com'
     end
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
@@ -80,10 +76,9 @@ class TestDSL < Test::Unit::TestCase
   end
 
   def test_post_block
-    res = post 'http://google.com' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'POST'
-      assert req.uri.host = 'mozy.com'
+    res = post 'http://google.com' do
+      assert type == 'POST'
+      assert uri.host = 'mozy.com'
     end
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
@@ -96,29 +91,28 @@ class TestDSL < Test::Unit::TestCase
 
   def test_delete_block
     res = delete 'http://google.com' do |req|
-      assert_not_nil req
-      assert req.options[:type] == 'DELETE'
-      assert req.uri.host = 'mozy.com'
+      assert type == 'DELETE'
+      assert uri.host = 'mozy.com'
     end
     assert_not_nil res
     assert res.code =~ /2[0-9].|3[0-9]./
   end
   
   def test_params
-    res = get 'http://mozy.com' do |req|
-      assert req.parameter "key", "value"
-      assert req.parameter "key2", "value"
-      assert req.parameters.include?("key")
-      assert req.parameters.include?("key2")
-      assert req.http_request.path.include?("key=value")
+    res = get 'http://mozy.com' do
+      assert parameter "key", "value"
+      assert parameter "key2", "value"
+      assert parameters.include?("key")
+      assert parameters.include?("key2")
+      assert http_request.path.include?("key=value")
     end
   end
   
   def test_headers
-    res = get 'http://mozy.com' do |req|
-      assert req.header "x-key", "value"
-      assert req.headers["x-key"] == "value"
-      assert req.http_request["x-key"] == "value"
+    res = get 'http://mozy.com' do
+      assert header "x-key", "value"
+      assert headers["x-key"] == "value"
+      assert http_request["x-key"] == "value"
     end
   end
 end

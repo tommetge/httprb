@@ -145,15 +145,26 @@ class Request
     return http_req
   end
   
+  def evaluate(&block)
+    @self_before_eval = eval "self", block.binding
+    r = instance_eval &block
+    @self_before_eval = nil # clear our state
+    r
+  end
+  
   # yep, you got it. we're messing with your mind
   # here. nothing to see here, move along...
-  def method_missing(method)
+  def method_missing(method, *args, &block)
     if method == :"ssl?"
       return @ssl
     elsif @options.keys.include?(method)
       return @options[method]
     end
-    super
+    if @self_before_eval
+      @self_before_eval.send method, *args, &block
+    else
+      super
+    end
   end
 end
 
