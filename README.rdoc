@@ -35,12 +35,9 @@ is over.
 
 == Installation
 
-while under active and early development, by which i mean until i
-deem it worthy, grab the source and either install it manually or
-run:
+NOW AVAILABLE! just run:
 
-  rake gem
-  gem install pkg/httprb*.gem
+  gem install httprb
 
 == Usage
 
