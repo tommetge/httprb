@@ -11,7 +11,8 @@ require 'cgi'
 module HTTPrb
   
 class Request
-  attr_accessor :uri, :headers, :parameters, :ssl, :debug
+  attr_accessor :uri, :headers, :parameters, :ssl, :debug,
+                :verify_mode
   attr_reader :options
   
   # create an HTTPrb::Request object
